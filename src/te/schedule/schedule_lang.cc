@@ -399,7 +399,8 @@ Stage& Stage::pragma(IterVar var, const std::string& pragma_type,
   } else if (pragma_type == "vectorize") {
     this->vectorize(var);
   } else {
-    With<ScheduleContext> ctx(operator->()->attach_sch, __func__);
+    With<ScheduleContext> ctx(operator->()->attach_sch, __func__); // The with class is to 
+    // manage the ScheduleContext, even an exception is thrown, the context will be exited.
     UpdateIterVarAttr(operator->(), var, [pragma_type, pragma_value](IterVarAttrNode* n) {
       n->pragma_keys.push_back(tir::StringImm(pragma_type));
       n->pragma_values.push_back(pragma_value);

@@ -74,6 +74,8 @@ from vta.testing import simulator
 host = os.environ.get("VTA_RPC_HOST", "192.168.2.99")
 port = int(os.environ.get("VTA_RPC_PORT", "9091"))
 
+print(f"env.TARGET={env.TARGET}")
+
 # We configure both the bitstream and the runtime system on the Pynq
 # to match the VTA configuration specified by the vta_config.json file.
 if env.TARGET == "pynq" or env.TARGET == "de10nano":
@@ -293,6 +295,10 @@ s[C].pragma(s[C].op.axis[0], env.dma_copy)
 # on VTA's vector ALU
 s[C_buf].pragma(C_buf.op.axis[0], env.alu)
 
+print("Test the orignal tvm lower")
+print(tvm.lower(s, [A, B, C], simple_mode=True))
+
+print("Test the VTA lower")
 # Let's take a look at the finalized schedule
 print(vta.lower(s, [A, B, C], simple_mode=True))
 
@@ -315,6 +321,8 @@ my_vadd = vta.build(
     s, [A, B, C], tvm.target.Target("ext_dev", host=env.target_host), name="my_vadd"
 )
 
+# print(my_vadd.get_source("asm"))
+
 ######################################################################
 # Saving the Module
 # ~~~~~~~~~~~~~~~~~
@@ -327,6 +335,8 @@ my_vadd = vta.build(
 
 # Write the compiled module into an object file.
 temp = utils.tempdir()
+print(f"temp path: {temp.relpath("vadd.o")}")
+my_vadd.save("vadd.o")
 my_vadd.save(temp.relpath("vadd.o"))
 
 # Send the executable over RPC

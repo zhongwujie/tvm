@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
+set(CMAKE_CXX_COMPILER /hpc/Edatools/opensource/compile/gcc-12.2.0/bin/g++)
+set(CMAKE_C_COMPILER /hpc/Edatools/opensource/compile/gcc-12.2.0/bin/gcc)
+
 project(tvm C CXX)
 
 # Utility functions

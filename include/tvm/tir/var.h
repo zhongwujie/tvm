@@ -187,7 +187,7 @@ using Region = Array<Range>;
  *  Each IterVar have a specific type.
  *
  *  The type of iter var can be overriden via
- *  stage.iter_var_attrs given they are compatible.
+ *  stage._attrs given they are compatible.
  */
 enum IterVarType : int {
   /*!

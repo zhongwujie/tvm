@@ -104,6 +104,7 @@ def lower(*args, **kwargs):
     pass_ctx = tvm.transform.PassContext.current()
     if not pass_ctx.config.get("add_lower_pass"):
         with build_config():
+            print("with build config")
             return tvm.lower(*args, **kwargs)
     return tvm.lower(*args, **kwargs)
 
@@ -121,6 +122,7 @@ def build(*args, **kwargs):
     pass_ctx = tvm.transform.PassContext.current()
     if not pass_ctx.config.get("tir.add_lower_pass"):
         with build_config():
+            print("with build config")
             return tvm.build(*args, **kwargs)
     return tvm.build(*args, **kwargs)
 

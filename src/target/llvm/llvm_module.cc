@@ -284,6 +284,8 @@ String LLVMModuleNode::GetSource(const String& format) {
   llvm::SmallString<256> str;
   llvm::raw_svector_ostream rso(str);
 
+  std::cout << "get source code in llvm_module.cc" << std::endl;
+
   if (fmt == "s" || fmt == "asm") {
     With<LLVMTarget> llvm_target(*llvm_instance_, LLVMTarget::GetTargetMetadata(*module_));
 #if TVM_LLVM_VERSION <= 60
