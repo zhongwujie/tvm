@@ -174,7 +174,7 @@ class Environment(object):
         self._dev_ctx = None
         self._last_env = None
 
-    def __enter__(self):
+    def __enter__(self): # for the with statement
         self._last_env = Environment.current
         Environment.current = self
         return self

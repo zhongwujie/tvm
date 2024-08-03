@@ -1,0 +1,38 @@
+TIR before transformation:
+# from tvm.script import ir as I
+# from tvm.script import tir as T
+
+@I.ir_module
+class Module:
+    @T.prim_func
+    def main(A: T.handle, B: T.handle):
+        T.func_attr({"from_legacy_te_schedule": T.bool(True), "tir.noalias": T.bool(True)})
+        m, l = T.int32(), T.int32()
+        A_1 = T.match_buffer(A, (m, l), strides=("stride", "stride"), buffer_type="auto")
+        B_1 = T.match_buffer(B, (m + 2, l), strides=("stride", "stride"), buffer_type="auto")
+        i = T.int32()
+        T.attr(T.iter_var(i, None, "DataPar", ""), "pragma_myself", 1)
+        for i, j in T.grid(m + 2, l):
+            B_2 = T.Buffer((B_1.strides[0] * (m + 2),), data=B_1.data, buffer_type="auto")
+            A_2 = T.Buffer((A_1.strides[0] * m,), data=A_1.data, buffer_type="auto")
+            B_2[i * B_1.strides[0] + j * B_1.strides[1]] = T.if_then_else(1 <= i and i <= m, A_2[(i - 1) * A_1.strides[0] + j * A_1.strides[1]], T.float32(1))
+TIR after transformation:
+type of src:  <class 'tvm.tir.buffer.Buffer'>
+type of dst:  <class 'tvm.tir.buffer.Buffer'>
+type of pad_before:  <class 'tvm.ir.container.Array'>
+type of pad_after:  <class 'tvm.ir.container.Array'>
+type of pad_value:  <class 'tvm.tir.expr.FloatImm'>
+src is a buffer
+The shape is: [m, l]
+# from tvm.script import ir as I
+# from tvm.script import tir as T
+
+@I.ir_module
+class Module:
+    @T.prim_func
+    def main(A: T.handle, B: T.handle):
+        T.func_attr({"from_legacy_te_schedule": T.bool(True), "tir.noalias": T.bool(True)})
+        m, l = T.int32(), T.int32()
+        A_1 = T.match_buffer(A, (m, l), strides=("stride", "stride"), buffer_type="auto")
+        B_1 = T.match_buffer(B, (m + 2, l), strides=("stride", "stride"), buffer_type="auto")
+        T.evaluate(0)

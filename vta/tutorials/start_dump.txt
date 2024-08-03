@@ -1,12 +1,5 @@
-[13:43:38] /hpc/home/connect.wzhong679/code/Simulator_sample/tvm/src/script/printer/tir/expr.cc:246: Warning: No TScriptPrinterName attribute for tir.vta.command_handle
-[13:43:38] /hpc/home/connect.wzhong679/code/Simulator_sample/tvm/src/script/printer/tir/expr.cc:246: Warning: No TScriptPrinterName attribute for tir.vta.command_handle
-[13:43:38] /hpc/home/connect.wzhong679/code/Simulator_sample/tvm/src/script/printer/tir/expr.cc:246: Warning: No TScriptPrinterName attribute for tir.vta.uop_push
-[13:43:38] /hpc/home/connect.wzhong679/code/Simulator_sample/tvm/src/script/printer/tir/expr.cc:246: Warning: No TScriptPrinterName attribute for tir.vta.coproc_dep_push
-[13:43:38] /hpc/home/connect.wzhong679/code/Simulator_sample/tvm/src/script/printer/tir/expr.cc:246: Warning: No TScriptPrinterName attribute for tir.vta.coproc_dep_pop
-[13:43:38] /hpc/home/connect.wzhong679/code/Simulator_sample/tvm/src/script/printer/tir/expr.cc:246: Warning: No TScriptPrinterName attribute for tir.vta.command_handle
-[13:43:38] /hpc/home/connect.wzhong679/code/Simulator_sample/tvm/src/script/printer/tir/expr.cc:246: Warning: No TScriptPrinterName attribute for tir.vta.coproc_sync
-2024-06-30 13:43:38.428 INFO load_module /tmp/tmpr3xhwfi9/vadd.o
 env.TARGET=sim
+The shape of A_buf: [1, 64, 1, 16]
 # from tvm.script import ir as I
 # from tvm.script import tir as T
 
@@ -35,6 +28,7 @@ class Module:
             cse_var_4: T.int32 = i1 * 16 + i3
             C_1 = T.Buffer((1024,), "int8", data=C.data)
             C_1[cse_var_4] = T.Cast("int8", A_buf_2[cse_var_4])
+The shape of A_buf: [1, 64, 1, 16]
 Test the orignal tvm lower
 # from tvm.script import ir as I
 # from tvm.script import tir as T
@@ -73,6 +67,33 @@ class Module:
             C_1[cse_var_4] = T.Cast("int8", A_buf_3[cse_var_4])
 Test the VTA lower
 with build config
+shape of src:  [64, 16]
+scope of src:  global
+dim: 1, buf.strides[i]: 1
+dim: 0, buf.strides[i]: 16
+scope: local.acc_buffer
+elem_block: 16
+original buffer shape: [64, 16]
+shape: [64, 16]
+strides: [16, 1]
+shape of src:  [64, 16]
+scope of src:  global
+dim: 1, buf.strides[i]: 1
+dim: 0, buf.strides[i]: 16
+scope: local.acc_buffer
+elem_block: 16
+original buffer shape: [64, 16]
+shape: [64, 16]
+strides: [16, 1]
+shape of src:  [64, 16]
+scope of src:  local.acc_buffer
+dim: 1, buf.strides[i]: 1
+dim: 0, buf.strides[i]: 16
+scope: local.acc_buffer
+elem_block: 16
+original buffer shape: [64, 16]
+shape: [64, 16]
+strides: [16, 1]
 # from tvm.script import ir as I
 # from tvm.script import tir as T
 
@@ -94,5 +115,34 @@ class Module:
             T.tir.vta.coproc_dep_pop(2, 3)
             T.call_extern("int32", "VTAStoreBuffer2D", T.tvm_thread_context(T.tir.vta.command_handle()), 0, 4, C.data, 0, 64, 1, 64)
         T.tir.vta.coproc_sync()
-temp path: /tmp/tmp_gyujwvn/vadd.o
+with build config
+shape of src:  [64, 16]
+scope of src:  global
+dim: 1, buf.strides[i]: 1
+dim: 0, buf.strides[i]: 16
+scope: local.acc_buffer
+elem_block: 16
+original buffer shape: [64, 16]
+shape: [64, 16]
+strides: [16, 1]
+shape of src:  [64, 16]
+scope of src:  global
+dim: 1, buf.strides[i]: 1
+dim: 0, buf.strides[i]: 16
+scope: local.acc_buffer
+elem_block: 16
+original buffer shape: [64, 16]
+shape: [64, 16]
+strides: [16, 1]
+shape of src:  [64, 16]
+scope of src:  local.acc_buffer
+dim: 1, buf.strides[i]: 1
+dim: 0, buf.strides[i]: 16
+scope: local.acc_buffer
+elem_block: 16
+original buffer shape: [64, 16]
+shape: [64, 16]
+strides: [16, 1]
+The shape of A_buf: [1, 64, 1, 16]
+temp path: /tmp/tmp53je7n23/vadd.o
 Successful vector add test!

@@ -4,7 +4,14 @@ from tvm.ir.module import IRModule
 from tvm.script import tir as T
 import numpy as np
 
-def test():
+class VarTest:
+  type: str
+
+def py_test():
+  VarTest.a = "string"
+  print(VarTest.a)
+
+def tir_test():
   A = te.placeholder((8,), dtype="float32", name="A")
   B = te.compute((8,), lambda i: A(i) + 1.0, name="B")
   func = te.create_prim_func([A, B])
@@ -12,4 +19,4 @@ def test():
   print(ir_module_from_te.script())
 
 if __name__ == "__main__":
-  test()
+  py_test()

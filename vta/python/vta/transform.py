@@ -19,6 +19,8 @@
 import tvm
 from tvm import te
 from tvm.topi import utils
+from tvm.tir import Buffer, FloatImm, IntImm
+from tvm.ir.container import Array
 
 from .environment import get_env
 
@@ -378,17 +380,21 @@ def InjectDMAIntrin():
     idxd = tvm.tir.indexdiv
     idxm = tvm.tir.indexmod
 
-    def _check_compact(buf):
+    def _check_compact(buf: Buffer):
         ndim = len(buf.shape)
         size = tvm.tir.const(1, buf.shape[0].dtype)
         for i in reversed(range(ndim)):
-            if not utils.equal_const_int(size - buf.strides[i], 0):
+            print(f"dim: {i}, buf.strides[i]: {buf.strides[i]}")
+            if not utils.equal_const_int(size - buf.strides[i], 0): # the stride should correspond to the dimension
                 raise RuntimeError(
                     "Cannot prove compact: shape=%s, strides=%s" % (buf.shape, buf.strides)
                 )
             size = size * buf.shape[i]
 
-    def _fold_buffer_dim(buf, scope, elem_block):
+    def _fold_buffer_dim(buf: Buffer, scope: tvm.runtime.container.String, elem_block: int):
+        print(f"scope: {scope}")
+        print(f"elem_block: {elem_block}")
+        print(f"original buffer shape: {buf.shape}")
         ndim = len(buf.shape)
         x_size = 1
         base = 0
@@ -433,6 +439,9 @@ def InjectDMAIntrin():
 
         strides = list(reversed(strides))
         shape = list(reversed(shape))
+
+        print(f"shape: {shape}")
+        print(f"strides: {strides}")
         return shape, strides
 
     def _get_2d_pattern(buf, elem_width, elem_bytes, dtype, scope, allow_fold):
@@ -519,8 +528,10 @@ def InjectDMAIntrin():
 
         raise_error()
 
-    def _inject_copy(src, dst, pad_before, pad_after, pad_value):
+    def _inject_copy(src: Buffer, dst: Buffer, pad_before: Array, pad_after: Array, pad_value: FloatImm):
         # FIXME: pad_value is ignored...
+        print("shape of src: ", src.shape)
+        print("scope of src: ", src.scope())
         env = get_env()
         _ = pad_value
         if dst.scope() == "global":
