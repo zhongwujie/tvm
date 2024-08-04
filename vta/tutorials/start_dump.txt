@@ -1,5 +1,4 @@
 env.TARGET=sim
-The shape of A_buf: [1, 64, 1, 16]
 # from tvm.script import ir as I
 # from tvm.script import tir as T
 
@@ -28,7 +27,6 @@ class Module:
             cse_var_4: T.int32 = i1 * 16 + i3
             C_1 = T.Buffer((1024,), "int8", data=C.data)
             C_1[cse_var_4] = T.Cast("int8", A_buf_2[cse_var_4])
-The shape of A_buf: [1, 64, 1, 16]
 Test the orignal tvm lower
 # from tvm.script import ir as I
 # from tvm.script import tir as T
@@ -143,6 +141,5 @@ elem_block: 16
 original buffer shape: [64, 16]
 shape: [64, 16]
 strides: [16, 1]
-The shape of A_buf: [1, 64, 1, 16]
-temp path: /tmp/tmp53je7n23/vadd.o
+temp path: /tmp/tmpb_l7a5mc/vadd.o
 Successful vector add test!
